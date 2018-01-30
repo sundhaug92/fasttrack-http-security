@@ -27,9 +27,16 @@ def get_csp_policy(document_domain):
     policy='; '.join([k + ' ' + directive_dict[k].strip() for k in directive_dict.keys()])
     return policy
 
+def get_sri_hashes(resource_domain):
+    return sorted(set(db_cursor.execute('SELECT resource_uri,sha256,sha384,sha512 FROM sri_hashes WHERE resource_domain=?', (resource_domain,)).fetchall()))
+
 if '*' in sys.argv:
-    sys.argv=sorted(set([_[0] for _ in db_cursor.execute('SELECT document_domain FROM known_relations').fetchall()+db_cursor.execute('SELECT resource_domain FROM known_relations').fetchall()]))
+    sys.argv=sorted(set([_[0] for _ in \
+        db_cursor.execute('SELECT document_domain FROM known_relations').fetchall()+\
+        db_cursor.execute('SELECT resource_domain FROM known_relations').fetchall()+\
+        db_cursor.execute('SELECT resource_domain FROM sri_hashes').fetchall()]))
 
 for document_domain in sorted((set(sys.argv[1:]))):
-    print('{}: {}'.format(document_domain, get_csp_policy(document_domain)))
-
+    print('CSP {}: {}'.format(document_domain, get_csp_policy(document_domain)))
+    for sri_hash_result in get_sri_hashes(document_domain):
+        print('SRI {}: {}'.format(document_domain, ' '.join(sri_hash_result)))
