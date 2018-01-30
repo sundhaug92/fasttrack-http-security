@@ -63,7 +63,7 @@ def get_csp_policy(flow: http.HTTPFlow) -> None:
         'script-src': "'none' "
     }
     if REQUIRE_SRI != []:
-        directive_dict['require-sri-for'] = ''.join(REQUIRE_SRI)
+        directive_dict['require-sri-for'] = ' '.join(REQUIRE_SRI)
 
     def add_directive(directive, resource_domain):
         if not directive in directive_dict.keys() or "'none'" in directive_dict[directive]:
