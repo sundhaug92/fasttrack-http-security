@@ -34,7 +34,7 @@ def get_csp_policy(document_domain):
 
 
 def get_sri_hashes(resource_domain):
-    return sorted(set(db_cursor.execute('SELECT resource_uri,sha256,sha384,sha512 FROM sri_hashes WHERE resource_domain=?', (resource_domain,)).fetchall()))
+    return sorted(set(db_cursor.execute('SELECT possibly_dynamic,resource_uri,sha256,sha384,sha512 FROM sri_hashes WHERE resource_domain=?', (resource_domain,)).fetchall()))
 
 
 if '*' in sys.argv:
@@ -46,4 +46,9 @@ if '*' in sys.argv:
 for document_domain in sorted((set(sys.argv[1:]))):
     print('CSP {}: {}'.format(document_domain, get_csp_policy(document_domain)))
     for sri_hash_result in get_sri_hashes(document_domain):
-        print('SRI {}: {}'.format(document_domain, ' '.join(sri_hash_result)))
+        if sri_hash_result[0] == '0' or sri_hash_result[0] == 0:
+            print('STATIC-SRI {}: {}'.format(document_domain,
+                                             ' '.join(sri_hash_result[1:])))
+        else:
+            print('DYNAMICISH-SRI {}: {}'.format(document_domain,
+                                                 ' '.join(sri_hash_result[1:])))
