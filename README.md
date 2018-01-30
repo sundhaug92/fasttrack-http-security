@@ -7,5 +7,5 @@ Fake a CSP to create a basic starting-point
 ```
 
 ```bash
-   python3 export-csp.py <domain> [domain2]
+   python3 export-meta.py <domain> [domain2]
 ```
