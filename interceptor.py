@@ -47,7 +47,7 @@ def insert_sri_hashes(flow: http.HTTPFlow, hash_name) -> None:
             resource_url), '"{}" integrity="{}" crossorigin="anonymous"'.format(resource_url, sri_hash))
 
 
-def get_csp_policy(flow: http.HTTPFlow) -> None:
+def get_csp_policy(flow: http.HTTPFlow) -> str:
     directive_dict = {
         'report-uri': 'https://example.org' + csp_blockd_path,
         'default-src': "'none'",
